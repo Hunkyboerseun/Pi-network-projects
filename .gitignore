@@ -1,0 +1,13 @@
+
+---
+
+# 2️⃣ **.gitignore**  
+**Path:** `.gitignore`
+
+```gitignore
+__pycache__/
+*.pyc
+.env
+venv/
+node_modules/
+.DS_Store
