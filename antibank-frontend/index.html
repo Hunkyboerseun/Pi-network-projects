@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ANTIBANK</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script type="module" src="./pi-login.js"></script>
+  <script type="module" src="./pay.js"></script>
+</head>
+<body>
+  <h1>ANTIBANK</h1>
+
+  <button onclick="login()">Login with Pi</button>
+
+  <button onclick="deposit5()">Deposit 5 PI</button>
+
+  <script type="module">
+    import { piLogin } from "./pi-login.js";
+    import { sendPiPayment } from "./pay.js";
+
+    window.login = async () => {
+      const user = await piLogin();
+      alert("Logged in as: " + user.user.username);
+    };
+
+    window.deposit5 = async () => {
+      const response = await sendPiPayment(5);
+      console.log(response);
+    };
+  </script>
+</body>
+</html>
