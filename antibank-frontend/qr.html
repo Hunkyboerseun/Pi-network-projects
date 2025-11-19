@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>ANTIBANK — QR</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="qr_display.js"></script>
+</head>
+<body>
+  <main class="container">
+    <h1>Scan / Pay</h1>
+    <div class="card">
+      <p>Scan a merchant QR with Pi Wallet or paste a Pi URI below.</p>
+      <label>Paste Pi URI</label>
+      <input id="uri" placeholder="pi://..." />
+      <button id="open">Open in Pi Wallet</button>
+    </div>
+
+    <script>
+      document.getElementById('open').onclick = () => {
+        const uri = document.getElementById('uri').value;
+        if(!uri) return alert('Enter pi:// URI');
+        // deep link open — Pi Browser should handle pi:// links
+        window.location.href = uri;
+      };
+    </script>
+  </main>
+</body>
+</html>
