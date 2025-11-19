@@ -1,0 +1,4 @@
+db = {
+    "balance": 0.0,
+    "transactions": []
+}
