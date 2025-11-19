@@ -1,27 +1,58 @@
-from security.auth import auth
-from engine.fiat_wallet import fiat_wallet
-from engine.exchange import exchange_engine
-from payments.merchant_flow import merchant_flow
-@app.get("/exchange/rate/{currency}")
-def get_rate(currency: str):
-    return {"rate": exchange_engine.get_rate(currency)}
+from fastapi import FastAPI
+from pydantic import BaseModel
 
-@app.get("/wallet/{user_id}")
-def balance(user_id: str):
-    return fiat_wallet.balance(user_id)
+app = FastAPI(title="ANTIBANK Backend API")
 
-@app.post("/wallet/add/{user_id}/{amount}")
-def add_to_wallet(user_id: str, amount: float):
-    return fiat_wallet.add(user_id, amount)
+# -------------------------
+# MODELS
+# -------------------------
 
-@app.post("/merchant/invoice/{user_id}/{amount}")
-def invoice(user_id: str, amount: float, currency: str = "USD"):
-    return merchant_flow.create_invoice(user_id, amount, currency)
+class Deposit(BaseModel):
+    amount: float
 
-@app.post("/merchant/verify/{invoice_id}/{payment_id}")
-def verify(invoice_id: str, payment_id: str):
-    return merchant_flow.verify_payment(invoice_id, payment_id)
+class Withdraw(BaseModel):
+    amount: float
 
-@app.post("/merchant/finalize/{invoice_id}")
-def finalize(invoice_id):
-    return merchant_flow.finalize(invoice_id)
+# -------------------------
+# TEMPORARY IN-MEMORY DATABASE
+# -------------------------
+
+db = {
+    "balance": 0.0
+}
+
+# -------------------------
+# ROUTES
+# -------------------------
+
+@app.get("/")
+def home():
+    return {"message": "Welcome to ANTIBANK Backend API"}
+
+@app.get("/balance")
+def get_balance():
+    return {"balance": db["balance"]}
+
+@app.post("/deposit")
+def deposit_money(data: Deposit):
+    db["balance"] += data.amount
+    return {"status": "success", "new_balance": db["balance"]}
+
+@app.post("/withdraw")
+def withdraw_money(data: Withdraw):
+    if data.amount > db["balance"]:
+        return {"status": "error", "message": "Insufficient funds!"}
+    db["balance"] -= data.amount
+    return {"status": "success", "new_balance": db["balance"]}
+
+@app.get("/routes")
+def list_routes():
+    return {
+        "available_routes": [
+            "/",
+            "/balance",
+            "/deposit",
+            "/withdraw",
+            "/routes"
+        ]
+    }
