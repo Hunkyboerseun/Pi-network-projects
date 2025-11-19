@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>ANTIBANK — Wallet</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="api.js"></script>
+</head>
+<body>
+  <main class="container">
+    <h1>FIAT Wallet (Demo)</h1>
+
+    <div class="card">
+      <label>User ID</label>
+      <input id="uid" value="U-1" />
+      <button id="create">Create Wallet</button>
+      <div id="walletInfo" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <label>Top-up amount</label>
+      <input id="top" inputmode="decimal" value="50" />
+      <button id="topup">Top-up (simulate)</button>
+    </div>
+
+    <script>
+      document.getElementById('create').onclick = async () => {
+        const userId = document.getElementById('uid').value;
+        const resp = await Api.createWallet({ userId, currency:'ZAR' });
+        if (!resp.ok) return alert('Create failed');
+        document.getElementById('walletInfo').innerText = `Wallet: ${resp.walletId}  Balance: ${resp.wallet.balance}`;
+      };
+
+      document.getElementById('topup').onclick = async () => {
+        const userId = document.getElementById('uid').value;
+        const amount = Number(document.getElementById('top').value);
+        // create wallet first if not exists demo uses returned walletId stored in server side by userId
+        const create = await Api.createWallet({ userId, currency:'ZAR' });
+        const wId = create.walletId;
+        const top = await Api.topupWallet(wId, { amount });
+        if (!top.ok) return alert('Top-up failed');
+        const balance = await Api.getWallet(wId);
+        document.getElementById('walletInfo').innerText = `Wallet: ${wId}  Balance: ${balance.wallet.balance}`;
+      };
+    </script>
+  </main>
+</body>
+</html>
