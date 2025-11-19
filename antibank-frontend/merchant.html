@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>ANTIBANK — Merchant POS</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="api.js"></script>
+  <script src="qr_display.js"></script>
+</head>
+<body>
+  <main class="container">
+    <h1>Merchant POS</h1>
+
+    <div class="card">
+      <label>Amount (FIAT)</label>
+      <input id="fiat" inputmode="decimal" value="100" />
+      <label>Currency</label>
+      <select id="currency">
+        <option>ZAR</option><option>USD</option><option>EUR</option><option>GBP</option>
+      </select>
+      <button id="gen">Generate QR</button>
+    </div>
+
+    <div id="qrArea" style="margin-top:12px;"></div>
+
+    <script>
+      document.getElementById('gen').onclick = async () => {
+        const fiat = Number(document.getElementById('fiat').value);
+        const currency = document.getElementById('currency').value;
+        const resp = await Api.createInvoice({ fiatAmount: fiat, currency });
+        if (!resp.ok) return alert('Failed: ' + (resp.error || 'unknown'));
+        const { qrDataUrl, payload } = resp;
+        document.getElementById('qrArea').innerHTML = QRDisplay(qrDataUrl, payload);
+      };
+    </script>
+  </main>
+</body>
+</html>
