@@ -1,3 +1,5 @@
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), "routes"))
 from fastapi import FastAPI
 from app.routes.balance import router as balance_routes
 from app.routes.transactions import router as transaction_routes
