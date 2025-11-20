@@ -11,6 +11,7 @@ try:
     from routes.fiat_routes import router as fiat_routes
 except:
     fiat_routes = None
+app.include_router(migration_routes, prefix="/admin/migration")
 
 # -------------------------------------------------------
 # CREATE APP FIRST (must come BEFORE include_router)
@@ -51,4 +52,5 @@ if fiat_routes:
 @app.get("/")
 def home():
     return {"status": "OK", "service": "ANTIBANK backend running"}
+from app.routes.migration_routes import router as migration_routes
 
